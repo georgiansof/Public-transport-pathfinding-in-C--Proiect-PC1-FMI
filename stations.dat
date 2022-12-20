@@ -1,0 +1,15 @@
+///"statie1" "statie2" travel_time cost
+
+"Grozavesti" "Petrache Poenaru" 3 3
+"Petrache Poenaru" "Grozavesti" 3 3
+"Grozavesti" "Eroilor" 3 3
+"Eroilor" "Grozavesti" 3 3
+"Eroilor" "Izvor" 3 3
+"Izvor" "Eroilor" 3 3
+"Izvor" "Piata Unirii" 3 3
+"Piata Unirii" "Izvor" 3 3
+"Piata Unirii" "Universitate" 3 3
+"Universitate" "Piata Unirii" 3 3
+
+"Eroilor" "Universitate" 5 5
+"Universitate" "Eroilor" 5 5

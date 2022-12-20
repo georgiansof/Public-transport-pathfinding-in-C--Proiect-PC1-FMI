@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "function_decl.h": "c",
+        "ctype.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
