@@ -138,7 +138,7 @@ bool station_exists_departure(char *station, struct stations_list *stations) {
 
 bool arrival_station_exists(char *station, struct stations_list *stations) {
     struct stations_list *p;
-    if(!p) return false;
+    if(!stations) return false;
     for(p=stations; p ; p=p->next)
         if(destination_seek(station,p->destinations)!=nullptr)
             return true;
@@ -162,7 +162,71 @@ bool station_exists_any(char *station, struct stations_list *stations) {
 
 
 void determine_fastest_path(char *starting_station, char *arriving_station, struct stations_list *stations) {
+    char** map = (char**) calloc(MAX_STATIONS+1 , sizeof(char*));
+    for(int i=0;i<=MAX_STATIONS;++i)
+        map[i] = (char*) calloc(STATION_NAME_MAX+2,sizeof(char));
 
+    int n = map_stations(map,stations);
+    int *parent = (int*) calloc(n+2, sizeof(int));
+    float total_cost = 0;
+    float *d = (float*) calloc(n , sizeof(float));
+    unsigned char *viz = (unsigned char*) malloc(n);
+    int start;
+
+    ENTRY e;
+    ENTRY *eptr;
+    e.key = starting_station;
+    eptr = hsearch(e, FIND);
+    start = eptr->data;
+
+    for(int i=0;i<n;++i)
+        d[i] = -INFINITY, viz[i] = 0;
+    d[start] = 0;
+
+    priority_queue pq;
+    pq.heap = init_minheap(n+5);
+    priority_queue_push(&pq,-d[start],start);
+
+    while(!priority_queue_empty(&pq)) {
+        int u = pq_peek(&pq);
+        pq_pop(&pq);
+        if(!viz[u]) {
+            viz[u]=1;
+            int j=1;
+            struct stations_list *p;
+            for(p = stations; p!=nullptr && j!=u; p=p->next, ++j)
+                ;
+            if(p!=nullptr) {
+                for(struct station_link *q = p->destinations; q!=nullptr; q=q->next) {
+                    e.key = q->arriving_station;
+                    eptr = hsearch(e,FIND);
+                    int index = eptr -> data;
+                    if(d[index] < d[u] - q->cost) {
+                        d[index] = d[u] - q->cost;
+                        parent[index] = u;
+                        priority_queue_push(&pq,-d[index],index);
+                    }
+                }
+            }
+        }
+    }
+
+    e.key = arriving_station;
+    eptr = hsearch(e,FIND);
+    int dest = (int) eptr->data;
+    printf("\nEstimated time to complete trip is %.2f\n",-d[dest]);
+    
+    print_path(parent[dest],parent,map);
+    printf("%s\n\n", map[dest]); /// ultima statie se printeaza separat ca sa nu apara o sageata in plus la afisare
+
+    for(int i=1;i<=n;++i)
+        free(map[i]);
+    free(map);
+    free(viz);
+    free(d);
+    free(parent);
+    hdestroy();
+    free_minheap(pq.heap);
 }
 
 void print_path(int node, int *parentsvec, char **map) {
@@ -197,7 +261,6 @@ void determine_cheapest_path(char *starting_station, char *arriving_station, str
     priority_queue pq;
     pq.heap = init_minheap(n+5);
     priority_queue_push(&pq,d[start],start);
-
     while(!priority_queue_empty(&pq)) {
         int u = pq_peek(&pq);
         pq_pop(&pq);

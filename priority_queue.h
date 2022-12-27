@@ -94,7 +94,7 @@ MinHeap* heapify(MinHeap *heap, int index) {
     if(left < heap->size && heap->arr[left].cost < heap->arr[index].cost)
         smallest = left;
     
-    if(right > heap->size && heap->arr[right].cost < heap->arr[smallest].cost)
+    if(right < heap->size && heap->arr[right].cost < heap->arr[smallest].cost)
         smallest = right;
 
     if(smallest != index) {
