@@ -5,14 +5,14 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
-#include "globals.h"
-#include "function_decl.h"
 #include <limits.h>
 #include <math.h>
 #include <search.h>
 
-#include "priority_queue.h"
-#include "utils.h"
+#include "headers/globals.h"
+#include "headers/function_decl.h"
+#include "headers/priority_queue.h"
+#include "headers/utils.h"
 
 
 /// aplicatie de calculare traseu intre statii
